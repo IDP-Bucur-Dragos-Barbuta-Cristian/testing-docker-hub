@@ -3,13 +3,14 @@ from flask import Flask
 import psycopg2
 import os
 from werkzeug.middleware.dispatcher import DispatcherMiddleware
-from prometheus_client import make_wsgi_app, Summary
+from prometheus_client import Counter, make_wsgi_app, Summary
 
 app = Flask(__name__)
 
 app.wsgi_app = DispatcherMiddleware(app.wsgi_app, {"/metrics": make_wsgi_app()})
 
 REQUEST_TIME = Summary("request_processing_seconds", "Time spent processing request")
+REQUEST_COUNT = Counter("request_counter_flask", "Number of requests")
 
 host = os.environ["DB_HOST"]
 user = os.environ["DB_USER"]
@@ -20,6 +21,7 @@ database = os.environ["DB_NAME"]
 @REQUEST_TIME.time()
 @app.route("/")
 def hello_world():
+    REQUEST_COUNT.inc()
     return "Hello, Docker!!!!"
 
 
