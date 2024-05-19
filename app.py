@@ -33,13 +33,6 @@ def get_widgets():
 
 @app.route("/initdb")
 def db_init():
-    conn = psycopg2.connect(host=host, user=user, password=password)
-    conn.set_session(autocommit=True)
-    with conn.cursor() as cur:
-        cur.execute("DROP DATABASE IF EXISTS example")
-        cur.execute("CREATE DATABASE example")
-    conn.close()
-
     with psycopg2.connect(
         host=host, user=user, password=password, database=database
     ) as conn:
