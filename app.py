@@ -2,8 +2,14 @@ import json
 from flask import Flask
 import psycopg2
 import os
+from werkzeug.middleware.dispatcher import DispatcherMiddleware
+from prometheus_client import make_wsgi_app, Summary
 
 app = Flask(__name__)
+
+app.wsgi_app = DispatcherMiddleware(app.wsgi_app, {"/metrics": make_wsgi_app()})
+
+REQUEST_TIME = Summary("request_processing_seconds", "Time spent processing request")
 
 host = os.environ["DB_HOST"]
 user = os.environ["DB_USER"]
@@ -11,11 +17,13 @@ password = os.environ["DB_PASSWORD"]
 database = os.environ["DB_NAME"]
 
 
+@REQUEST_TIME.time()
 @app.route("/")
 def hello_world():
     return "Hello, Docker!!!!"
 
 
+@REQUEST_TIME.time()
 @app.route("/widgets")
 def get_widgets():
     with psycopg2.connect(
@@ -31,6 +39,7 @@ def get_widgets():
     return json.dumps(json_data)
 
 
+@REQUEST_TIME.time()
 @app.route("/initdb")
 def db_init():
     with psycopg2.connect(
