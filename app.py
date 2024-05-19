@@ -9,8 +9,10 @@ app = Flask(__name__)
 
 app.wsgi_app = DispatcherMiddleware(app.wsgi_app, {"/metrics": make_wsgi_app()})
 
-REQUEST_TIME = Summary("request_processing_seconds", "Time spent processing request")
-REQUEST_COUNT = Counter("request_counter_flask", "Number of requests")
+REQUEST_TIME = Summary(
+    "flask_request_processing_seconds", "Time spent processing request"
+)
+REQUEST_COUNT = Counter("flask_request_counter_flask", "Number of requests")
 
 host = os.environ["DB_HOST"]
 user = os.environ["DB_USER"]
