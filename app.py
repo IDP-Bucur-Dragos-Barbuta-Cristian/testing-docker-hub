@@ -5,11 +5,10 @@ import os
 
 app = Flask(__name__)
 
-if "POSTGRES_PASSWORD_FILE" in os.environ:
-    with open(os.environ["POSTGRES_PASSWORD_FILE"], "r") as f:
-        password = f.read().strip()
-else:
-    password = os.environ["POSTGRES_PASSWORD"]
+host = os.environ["POSTGRES_HOST"]
+user = os.environ["POSTGRES_USER"]
+password = os.environ["POSTGRES_PASSWORD"]
+database = os.environ["POSTGRES_DB"]
 
 
 @app.route("/")
@@ -20,7 +19,7 @@ def hello_world():
 @app.route("/widgets")
 def get_widgets():
     with psycopg2.connect(
-        host="db", user="postgres", password=password, database="example"
+        host=host, user=user, password=password, database=database
     ) as conn:
         with conn.cursor() as cur:
             cur.execute("SELECT * FROM widgets")
@@ -34,7 +33,7 @@ def get_widgets():
 
 @app.route("/initdb")
 def db_init():
-    conn = psycopg2.connect(host="db", user="postgres", password=password)
+    conn = psycopg2.connect(host=host, user=user, password=password)
     conn.set_session(autocommit=True)
     with conn.cursor() as cur:
         cur.execute("DROP DATABASE IF EXISTS example")
@@ -42,7 +41,7 @@ def db_init():
     conn.close()
 
     with psycopg2.connect(
-        host="db", user="postgres", password=password, database="example"
+        host=host, user=user, password=password, database=database
     ) as conn:
         with conn.cursor() as cur:
             cur.execute("DROP TABLE IF EXISTS widgets")
