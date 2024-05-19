@@ -5,10 +5,10 @@ import os
 
 app = Flask(__name__)
 
-host = os.environ["POSTGRES_HOST"]
-user = os.environ["POSTGRES_USER"]
-password = os.environ["POSTGRES_PASSWORD"]
-database = os.environ["POSTGRES_DB"]
+host = os.environ["DB_HOST"]
+user = os.environ["DB_USER"]
+password = os.environ["DB_PASSWORD"]
+database = os.environ["DB_NAME"]
 
 
 @app.route("/")
