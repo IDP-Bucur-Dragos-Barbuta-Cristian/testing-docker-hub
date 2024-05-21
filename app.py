@@ -24,7 +24,7 @@ database = os.environ["DB_NAME"]
 @app.route("/")
 def hello_world():
     REQUEST_COUNT.inc()
-    return "Hello, Docker!!!!"
+    return "--------Hello, Docker!!!!"
 
 
 @REQUEST_TIME.time()
